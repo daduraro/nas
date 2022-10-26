@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    ports:
+      - "32400:32400/tcp" # main communication port
+      - "3005:3005/tcp"
+      #- "8324:8324/tcp" # controlling Plex for Roku via Plex Companion
+      - "32469:32469/tcp" # access to the Plex DLNA Server
+      - "1900:1900/udp" # access to the Plex DLNA Server
+      - "32410:32410/udp" # Plex GDM local discovery
+      - "32412:32412/udp" # Plex GDM local discovery
+      - "32413:32413/udp" # Plex GDM local discovery
+      - "32414:32414/udp" # Plex GDM local discovery
+    environment:
+      - HOSTNAME=PlexServer
+      - TZ=Europe/Andorra
+      - ADVERTISE_IP=${ADVERTISE_IP}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+    volumes:
+      - ${PLEX_CONFIG_PATH}:/config
+      - ${PLEX_MEDIA_PATH}:/data
+      - ${PLEX_TMP_PATH}:/transcode
+#    networks:
+#      - nginx
+#
+#networks:
+#  nginx:
+#    external: true
