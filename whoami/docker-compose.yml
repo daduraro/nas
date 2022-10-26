@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  whoami:
+    image: jwilder/whoami
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+        #- HTTPS_METHOD=redirect
+    expose:
+      - "8000"
+    networks:
+      - nginx
+
+networks:
+  nginx:
+    external: true

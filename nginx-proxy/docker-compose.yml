@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "7080:80"
+      - "443:443"
+      - "7443:443"
+    volumes:
+      - ${CONF_FILE}:/etc/nginx/conf.d/my_proxy.conf:ro
+      - ${CERTS_DIR}:/etc/nginx/certs
+
+networks:
+  default:
+    external: true
+    name: nginx
