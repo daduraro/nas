@@ -1,0 +1,17 @@
+version: "3"
+services:
+  deluge:
+    image: linuxserver/deluge:latest
+    container_name: deluge
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/config:/config
+      - ${PLEX_MEDIA_DIR}:/downloads/plex
+    ports:
+      - "8112:8112"
+      - "6881:6881"
+      - "58846:58846"
+    restart: unless-stopped
