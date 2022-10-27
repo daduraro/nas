@@ -1,13 +1,5 @@
 version: "3"
 
-volumes:
-  files:
-    driver: local
-  mysql:
-    driver: local
-  redis:
-    driver: local
-
 services:
   owncloud:
     image: owncloud/server:10.11.0
@@ -31,7 +23,6 @@ services:
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-      - OWNCLOUD_SUB_URL=/owncloud
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 30s
