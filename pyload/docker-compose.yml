@@ -1,8 +1,8 @@
-version: "3"
+version: '2'
 services:
-  deluge:
-    image: linuxserver/deluge:latest
-    container_name: deluge
+  pyload:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -11,7 +11,6 @@ services:
       - ./data/config:/config
       - ${DOWNLOAD_DIR}:/downloads
     ports:
-      - "8112:8112"
-      - "6881:6881"
-      - "58846:58846"
+      - 8000:8000 # Webinterface
+      - 9666:9666 # Click 'N' Load
     restart: unless-stopped

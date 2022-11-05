@@ -1,0 +1,3 @@
+[submodule "pyload/src"]
+	path = pyload/src
+	url = https://github.com/pyload/pyload
