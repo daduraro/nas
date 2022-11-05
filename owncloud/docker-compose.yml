@@ -32,6 +32,7 @@ services:
       - ${DATA_DIR}:/mnt/data
     networks:
       - nginx
+      - bot-owncloud
       - default
 
   mariadb:
@@ -66,5 +67,7 @@ services:
       - ${REDIS_DIR}:/data
 
 networks:
+  bot-owncloud:
+    external: true
   nginx:
     external: true
