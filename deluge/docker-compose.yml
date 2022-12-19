@@ -15,3 +15,10 @@ services:
       - "6881:6881"
       - "58846:58846"
     restart: unless-stopped
+    networks:
+      - default
+      - deluge-network
+networks:
+  deluge-network:
+    external: true
+

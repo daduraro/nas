@@ -11,3 +11,4 @@ services:
     volumes:
       - "./data/config:/config:rw"
       - "${DOWNLOAD_DIR}:/output:rw"
+    restart: unless-stopped

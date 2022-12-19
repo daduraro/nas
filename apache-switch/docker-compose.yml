@@ -7,3 +7,4 @@ services:
     volumes:
       - "${GAMES_DIR}:/var/www/html/games:ro"
       - "${PWD}/index.php:/var/www/html/index.php:ro"
+    restart: unless-stopped

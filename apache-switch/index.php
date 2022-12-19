@@ -4,7 +4,7 @@ $MOTD = "NAS Tinwoo Shop";
 $EXT = ['nsp','xci','nsz','xcz'];
 $FOLDER = "games";
 $WEB_FOLDER = "/";
-$SERVER = "192.168.0.6";
+$SERVER = "http://192.168.0.6";
 $PORT = "7000";
 
 $dir = new DirectoryIterator($FOLDER."/");

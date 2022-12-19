@@ -13,6 +13,9 @@ services:
     volumes:
       - ${CONF_FILE}:/etc/nginx/conf.d/my_proxy.conf:ro
       - ${CERTS_DIR}:/etc/nginx/certs
+    networks:
+      default:
+        ipv4_address: 172.24.0.254
 
 networks:
   default:
