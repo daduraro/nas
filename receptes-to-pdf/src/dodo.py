@@ -23,6 +23,7 @@ def task_convert():
                 ['mv', '-f', tmpFile.with_suffix(".pdf"), t],
             ],
             'file_dep': [p],
+            'uptodate': [not t.exists() or t.stat().st_size > 0],
             'targets': [t],
         }
 

@@ -2,13 +2,18 @@ version: '3'
 services:
   jdownloader-2:
     image: jlesage/jdownloader-2
+    container_name: jdownloader
     environment:
       - TZ=Europe/Andorra
       - USER_ID=${PUID}
       - GROUP_ID=${PGID}
-    ports:
-      - "5800:5800"
     volumes:
       - "./data/config:/config:rw"
       - "${DOWNLOAD_DIR}:/output:rw"
     restart: unless-stopped
+    networks:
+      - nginx
+
+networks:
+  nginx:
+    external: true

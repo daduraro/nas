@@ -8,12 +8,11 @@ services:
       - PGID=65534
       - TZ=Europe/Andorra
     volumes:
-      - ./config/prowlarr:/config
+      - ./data/prowlarr:/config
     networks:
       - default
       - deluge-network
-    ports:
-      - 9696:9696
+      - nginx
     restart: unless-stopped
 
   sonarr:
@@ -24,13 +23,12 @@ services:
       - PGID=65534
       - TZ=Europe/Andorra
     volumes:
-      - ./config/sonarr:/config
-      - ${DOWNLOADS_DIR}:/downloads
+      - ./data/sonarr:/config
+      - ${FILES_DIR}:/files
     networks:
       - default
       - deluge-network
-    ports:
-      - 8989:8989
+      - nginx
     restart: unless-stopped
 
   sonarr_anime:
@@ -41,13 +39,12 @@ services:
       - PGID=65534
       - TZ=Europe/Andorra
     volumes:
-      - ./config/sonarr_anime:/config
-      - ${DOWNLOADS_DIR}:/downloads
+      - ./data/sonarr_anime:/config
+      - ${FILES_DIR}:/files
     networks:
       - default
       - deluge-network
-    ports:
-      - 8990:8990
+      - nginx
     restart: unless-stopped
 
   radarr:
@@ -58,16 +55,33 @@ services:
       - PGID=65534
       - TZ=Europe/Andorra
     volumes:
-      - ./config/radarr:/config
-      - ${DOWNLOADS_DIR}:/downloads
+      - ./data/radarr:/config
+      - ${FILES_DIR}:/files
     networks:
       - default
       - deluge-network
-    ports:
-      - 7878:7878
+      - nginx
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/lidarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - deluge-network
+      - nginx
     restart: unless-stopped
 
 networks:
   deluge-network:
+    external: true
+  nginx:
     external: true
 

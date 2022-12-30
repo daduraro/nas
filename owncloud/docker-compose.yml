@@ -10,6 +10,8 @@ services:
     depends_on:
       - mariadb
       - redis
+    labels:
+      com.centurylinklabs.watchtower.monitor-only: "true"
     environment:
       - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
       - OWNCLOUD_TRUSTED_DOMAINS=${OWNCLOUD_TRUSTED_DOMAINS}
@@ -29,7 +31,7 @@ services:
       timeout: 10s
       retries: 5
     volumes:
-      - ${DATA_DIR}:/mnt/data
+      - ./data/data:/mnt/data
     networks:
       - nginx
       - bot-owncloud
@@ -50,21 +52,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    labels:
+      com.centurylinklabs.watchtower.monitor-only: "true"
     volumes:
-      - ${SQL_DIR}:/var/lib/mysql
+      - ./data/sql:/var/lib/mysql
 
   redis:
     image: redis:6
     container_name: owncloud_redis
     restart: always
     command: ["--databases", "1"]
+    labels:
+      com.centurylinklabs.watchtower.monitor-only: "true"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
-      - ${REDIS_DIR}:/data
+      - ./data/redis:/data
 
 networks:
   bot-owncloud:

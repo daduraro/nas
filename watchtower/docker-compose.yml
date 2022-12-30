@@ -1,0 +1,17 @@
+version: "3"
+services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: "Europe/Andorra"
+      #WATCHTOWER_MONITOR_ONLY: "true"
+      WATCHTOWER_SCHEDULE: "0 0 2 * * *"
+      WATCHTOWER_NOTIFICATION_URL: "smtp://:@mailu-front-1:25/?from=me@daduraronas.duckdns.org&to=david@daduraronas.duckdns.org&auth=None&encryption=None&starttls=No"
+    restart: unless-stopped
+    networks:
+      - mailu_default
+networks:
+  mailu_default:
+    external: true

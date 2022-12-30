@@ -11,7 +11,7 @@ services:
     image: redis:alpine
     restart: always
     volumes:
-      - "./config/redis:/data"
+      - "./data/redis:/data"
     depends_on:
       - resolver
     dns:
@@ -35,8 +35,8 @@ services:
       - "0.0.0.0:143:143" # IMAP STARTTLS
       - "0.0.0.0:993:993" # IMAP TLS
     volumes:
-      - "./config/certs:/certs"
-      - "./config/overrides/nginx:/overrides:ro"
+      - "./data/certs:/certs"
+      - "./data/overrides/nginx:/overrides:ro"
     depends_on:
       - resolver
     dns:
@@ -44,6 +44,7 @@ services:
     networks:
       - default
       - nginx
+      - mail
 
   resolver:
     image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-1.9}
@@ -58,8 +59,8 @@ services:
     restart: always
     env_file: mailu.env
     volumes:
-      - "./config/data:/data"
-      - "./config/dkim:/dkim"
+      - "./data/data:/data"
+      - "./data/dkim:/dkim"
     depends_on:
       - redis
       - resolver
@@ -71,8 +72,8 @@ services:
     restart: always
     env_file: mailu.env
     volumes:
-      - "./config/mail:/mail"
-      - "./config/overrides/dovecot:/overrides:ro"
+      - "./data/mail:/mail"
+      - "./data/overrides/dovecot:/overrides:ro"
     depends_on:
       - front
       - resolver
@@ -84,8 +85,8 @@ services:
     restart: always
     env_file: mailu.env
     volumes:
-      - "./config/mailqueue:/queue"
-      - "./config/overrides/postfix:/overrides:ro"
+      - "./data/mailqueue:/queue"
+      - "./data/overrides/postfix:/overrides:ro"
     depends_on:
       - front
       - resolver
@@ -98,8 +99,8 @@ services:
     restart: always
     env_file: mailu.env
     volumes:
-      - "./config/filter:/var/lib/rspamd"
-      - "./config/overrides/rspamd:/etc/rspamd/override.d:ro"
+      - "./data/filter:/var/lib/rspamd"
+      - "./data/overrides/rspamd:/etc/rspamd/override.d:ro"
     depends_on:
       - front
       - resolver
@@ -116,8 +117,8 @@ services:
     restart: always
     env_file: mailu.env
     volumes:
-      - "./config/webmail:/data"
-      - "./config/overrides/roundcube:/overrides:ro"
+      - "./data/webmail:/data"
+      - "./data/overrides/roundcube:/overrides:ro"
     depends_on:
       - imap
       - resolver
@@ -126,6 +127,8 @@ services:
 
 networks:
   nginx:
+    external: true
+  mail:
     external: true
   default:
     driver: bridge

@@ -1,7 +1,10 @@
 version: "3"
 services:
   receptes-pdf:
-    build: .
+    build:
+      context: ./src
+      args:
+        DAV_CA_CERT_NAME: ${DAV_CA_CERT_NAME}
     container_name: receptes-pdf
     environment:
       - DAV_SERVER=${DAV_SERVER}
@@ -9,7 +12,6 @@ services:
       - DAV_SERVER_PASS=${DAV_SERVER_PASS}
       - DAV_SERVER_INDIR=${DAV_SERVER_INDIR}
       - DAV_SERVER_OUTDIR=${DAV_SERVER_OUTDIR}
-      - DAV_CA_CERT_NAME=${DAV_CA_CERT_NAME}
     volumes:
       - ./data/config:/config
       - ./ssl:/etc/davfs2/certs
@@ -23,6 +25,8 @@ services:
       - SYS_ADMIN
     devices:
       - "/dev/fuse"
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
 
 networks:
   bot-owncloud:

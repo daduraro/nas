@@ -1,0 +1,6 @@
+version: "2.1"
+services:
+  loudgain:
+    build: .
+    ports:
+      - "8787:8080"

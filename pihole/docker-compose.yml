@@ -1,15 +1,14 @@
 version: '3.7'
 services:
   cloudflared:
-    image: visibilityspots/cloudflared
+    image: cloudflare/cloudflared
     container_name: cloudflared
-    ports:
-      - "5054:5054/tcp"
-      - "5054:5054/udp"
     environment:
-      - TZ=${TIMEZONE}
-      - PORT=5054
-      - ADDRESS=0.0.0.0
+      - "TZ=${TIMEZONE}"
+      - "TUNNEL_DNS_UPSTREAM=https://1.0.0.1/dns-query,https://1.1.1.1/dns-query"
+      - "TUNNEL_DNS_ADDRESS=0.0.0.0"
+      - "TUNNEL_DNS_PORT=5053"
+    command: proxy-dns
     restart: always
     networks:
       dns-net:
@@ -24,12 +23,11 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       #- "67:67/udp" # DHCP port
-      #- "6080:80/tcp"
-      #- "6443:443/tcp"
 
     environment:
       - TZ=${TIMEZONE}
-      - PIHOLE_DNS_=172.20.0.2#5054;1.1.1.1 # referencing by name results in "Invalid IP detected in PIHOLE_DNS_: cloudflared#5054"
+      - PIHOLE_DNS_=172.20.0.2#5053 # referencing by name results in "Invalid IP detected in PIHOLE_DNS_: cloudflared#5054"
+      #- PIHOLE_DNS_=1.1.1.1 # referencing by name results in "Invalid IP detected in PIHOLE_DNS_: cloudflared#5054"
       - WEBPASSWORD=${PIHOLE_PW}
       - REV_SERVER=true
       - REV_SERVER_TARGET=${PIHOLE_ROUTER_IP}
@@ -49,8 +47,9 @@ services:
       - "cloudflared"
     restart: always
     networks:
-      - dns-net
-      - nginx
+      dns-net:
+        ipv4_address: 172.20.0.3
+      nginx:
 
 networks:
   dns-net:
