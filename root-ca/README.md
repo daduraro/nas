@@ -42,8 +42,16 @@ Following guide from https://jamielinux.com/docs/openssl-certificate-authority/i
 
 ## Generate key
 
+ECC key:
+
 ```console
 # openssl ecparam -name prime256v1 -genkey -noout -out srv.key.pem
+```
+
+RSA key:
+
+```console
+# openssl genrsa -out srv.key.pem 2048
 ```
 
 ## Create CSR

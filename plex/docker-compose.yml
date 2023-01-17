@@ -3,7 +3,8 @@ version: "3"
 services:
   plex:
     container_name: plex
-    image: plexinc/pms-docker
+    #image: plexinc/pms-docker
+    image: lscr.io/linuxserver/plex:latest
     restart: unless-stopped
     ports:
       - "32400:32400/tcp" # main communication port
@@ -18,12 +19,26 @@ services:
     environment:
       - HOSTNAME=PlexServer
       - TZ=Europe/Andorra
+      - PUID=65534
+      - PGID=65534
+      - VERSION=docker
       - ADVERTISE_IP=${ADVERTISE_IP}
       - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
       - ${PLEX_CONFIG_PATH}:/config
       - ${PLEX_MEDIA_PATH}:/data
       - ${PLEX_TMP_PATH}:/transcode
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    #deploy:
+      #resources:
+        #reservations:
+          #devices:
+            #- driver: nvidia
+              #count: 1
+              #capabilities: [gpu]
+
 #    networks:
 #      - nginx
 #

@@ -1,0 +1,26 @@
+version: "2.1"
+services:
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:nightly
+    container_name: calibre-web
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      # - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - ./data/config:/config
+      - ${BOOKS_DIR}:/books
+    ports:
+      - 8083:8083
+    restart: unless-stopped
+    networks:
+      - nginx
+      - mail
+
+networks:
+  nginx:
+    external: true
+  mail:
+    external: true

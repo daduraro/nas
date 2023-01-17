@@ -22,6 +22,7 @@ services:
     image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}nginx:${MAILU_VERSION:-1.9}
     restart: always
     env_file: mailu.env
+    container_name: mail-front
     logging:
       driver: json-file
     ports:
@@ -44,7 +45,6 @@ services:
     networks:
       - default
       - nginx
-      - mail
 
   resolver:
     image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-1.9}
@@ -128,11 +128,12 @@ services:
 networks:
   nginx:
     external: true
-  mail:
-    external: true
   default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.123.0/24
+    name: mail
+    external: true
+  #default:
+  #  driver: bridge
+  #  ipam:
+  #    driver: default
+  #    config:
+  #      - subnet: 192.168.123.0/24
