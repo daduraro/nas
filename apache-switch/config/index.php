@@ -4,7 +4,8 @@ $MOTD = "NAS Tinwoo Shop";
 $EXT = ['nsp','xci','nsz','xcz'];
 $FOLDER = "games";
 $WEB_FOLDER = "/";
-$SERVER = "http://192.168.0.6";
+$PROTO = $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ? 'https://' : 'http://';
+$SERVER = $PROTO.$_SERVER['HTTP_HOST'];
 $PORT = "7000";
 
 $dir = new DirectoryIterator($FOLDER."/");
@@ -18,7 +19,7 @@ foreach ($dir as $fileinfo) {
 				if ($fileinfo2->isFile()) {
 					if (in_array($fileinfo2->getExtension(),$EXT)) {
 						$arrFiles [] = [
-							'url'=>$SERVER.":".$PORT.$WEB_FOLDER.rawurlencode($DIR1)."/".rawurlencode($DIR2)."/".rawurlencode($fileinfo2->getFilename()),
+							'url'=>$SERVER.$WEB_FOLDER.rawurlencode($DIR1)."/".rawurlencode($DIR2)."/".rawurlencode($fileinfo2->getFilename()),
 							'size'=> $fileinfo2->getSize()];
 						$arrDir [] = [];
 					}
@@ -27,7 +28,7 @@ foreach ($dir as $fileinfo) {
 		} elseif (!$fileinfo->isFile()) {
 			if (in_array($fileinfo->getExtension(),$EXT)) {
 				$arrFiles [] = [
-					'url'=>$SERVER.":".$PORT.$WEB_FOLDER.rawurlencode($DIR1)."/".rawurlencode($fileinfo->getFilename()),
+					'url'=>$SERVER.$WEB_FOLDER.rawurlencode($DIR1)."/".rawurlencode($fileinfo->getFilename()),
 					'size'=> $fileinfo->getSize()];
 				$arrDir [] = [];
 			}

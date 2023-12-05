@@ -1,3 +1,6 @@
 [submodule "pyload/src"]
 	path = pyload/src
 	url = https://github.com/pyload/pyload
+[submodule "wordler/src"]
+	path = wordler/src
+	url = git@github.com:daduraro/wordle-helper.git

@@ -19,22 +19,28 @@ services:
 
   # Core services
   front:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}nginx:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}nginx:${MAILU_VERSION:-2.0}
     restart: always
     env_file: mailu.env
     container_name: mail-front
     logging:
-      driver: json-file
+      driver: journald
+      options:
+        tag: mailu-front
     ports:
-      # - "0.0.0.0:80:80"   # HTTP
-      # - "0.0.0.0:443:443" # HTTPS
-      - "0.0.0.0:25:25"   # SMTP
-      - "0.0.0.0:465:465" # SMTP TLS
-      - "0.0.0.0:587:587" # SMTP STARTTLS
-      - "0.0.0.0:110:110" # POP3
-      - "0.0.0.0:995:995" # POP3 TLS
-      - "0.0.0.0:143:143" # IMAP STARTTLS
-      - "0.0.0.0:993:993" # IMAP TLS
+      # - "127.0.0.1:80:80"
+      # - "127.0.0.1:443:443"
+      - "0.0.0.0:25:25"
+      - "0.0.0.0:465:465"
+      - "0.0.0.0:587:587"
+      - "0.0.0.0:110:110"
+      - "0.0.0.0:995:995"
+      - "0.0.0.0:143:143"
+      - "0.0.0.0:993:993"
+    networks:
+      - default
+      - webmail
+      - nginx
     volumes:
       - "./data/certs:/certs"
       - "./data/overrides/nginx:/overrides:ro"
@@ -42,12 +48,9 @@ services:
       - resolver
     dns:
       - 192.168.123.254
-    networks:
-      - default
-      - nginx
 
   resolver:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-2.0}
     env_file: mailu.env
     restart: always
     networks:
@@ -55,9 +58,13 @@ services:
         ipv4_address: 192.168.123.254
 
   admin:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}admin:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}admin:${MAILU_VERSION:-2.0}
     restart: always
     env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-admin
     volumes:
       - "./data/data:/data"
       - "./data/dkim:/dkim"
@@ -68,9 +75,13 @@ services:
       - 192.168.123.254
 
   imap:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}dovecot:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}dovecot:${MAILU_VERSION:-2.0}
     restart: always
     env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-imap
     volumes:
       - "./data/mail:/mail"
       - "./data/overrides/dovecot:/overrides:ro"
@@ -81,9 +92,13 @@ services:
       - 192.168.123.254
 
   smtp:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}postfix:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}postfix:${MAILU_VERSION:-2.0}
     restart: always
     env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-smtp
     volumes:
       - "./data/mailqueue:/queue"
       - "./data/overrides/postfix:/overrides:ro"
@@ -93,16 +108,36 @@ services:
     dns:
       - 192.168.123.254
 
+  oletools:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}oletools:${MAILU_VERSION:-2.0}
+    hostname: oletools
+    restart: always
+    networks:
+      - noinet
+    depends_on:
+      - resolver
+    dns:
+      - 192.168.123.254
+
   antispam:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}rspamd:${MAILU_VERSION:-1.9}
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}rspamd:${MAILU_VERSION:-2.0}
     hostname: antispam
     restart: always
     env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-antispam
+    networks:
+      - default
+      - noinet
     volumes:
       - "./data/filter:/var/lib/rspamd"
-      - "./data/overrides/rspamd:/etc/rspamd/override.d:ro"
+      - "./data/overrides/rspamd:/overrides:ro"
     depends_on:
       - front
+      - redis
+      - oletools
       - resolver
     dns:
       - 192.168.123.254
@@ -110,30 +145,41 @@ services:
   # Optional services
 
 
-
-  # Webmail
-  webmail:
-    image: ${DOCKER_ORG:-mailu}/${DOCKER_PREFIX:-}roundcube:${MAILU_VERSION:-1.9}
+  fetchmail:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}fetchmail:${MAILU_VERSION:-2.0}
     restart: always
     env_file: mailu.env
     volumes:
-      - "./data/webmail:/data"
-      - "./data/overrides/roundcube:/overrides:ro"
+      - "./data/data/fetchmail:/data"
     depends_on:
+      - admin
+      - smtp
       - imap
       - resolver
     dns:
       - 192.168.123.254
 
+  # Webmail
+  webmail:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}webmail:${MAILU_VERSION:-2.0}
+    restart: always
+    env_file: mailu.env
+    volumes:
+      - "./data/webmail:/data"
+      - "./data/overrides/roundcube:/overrides:ro"
+    networks:
+      - webmail
+    depends_on:
+      - front
+
 networks:
-  nginx:
-    external: true
   default:
     name: mail
     external: true
-  #default:
-  #  driver: bridge
-  #  ipam:
-  #    driver: default
-  #    config:
-  #      - subnet: 192.168.123.0/24
+  webmail:
+    driver: bridge
+  nginx:
+    external: true
+  noinet:
+    driver: bridge
+    internal: true

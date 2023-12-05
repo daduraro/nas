@@ -2,9 +2,15 @@ version: '3'
 services:
   switch-httpd:
     image: php:7.2-apache
+    container_name: switch-httpd
     ports:
       - "7000:80"
     volumes:
       - "${GAMES_DIR}:/var/www/html/games:ro"
       - "./config/index.php:/var/www/html/index.php:ro"
     restart: unless-stopped
+    networks:
+      - nginx
+networks:
+  nginx:
+    external: true

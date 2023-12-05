@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  wordler:
+    build: ./src
+    container_name: wordler
+    restart: always
+    expose:
+      - "8080"
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
+    volumes:
+      - "./data/corpus.txt:/data/corpus.txt:r"
+    networks:
+      - nginx
+
+networks:
+  nginx:
+    external: true

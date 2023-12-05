@@ -1,0 +1,12 @@
+1. Disable system resolvd STUB:
+
+```shell
+sudo sed -i "s/^#Cache=yes/Cache=no/g" /etc/systemd/resolved.conf
+sudo sed -i "s/^#DNSStubListener=yes/DNSStubListener=no/g" /etc/systemd/resolved.conf
+```
+
+2. Restart service:
+
+```shell
+systemctl restart systemd-resolved
+```

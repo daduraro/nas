@@ -1,0 +1,19 @@
+version: "3"
+services:
+  mailrise:
+    image: yoryan/mailrise
+    container_name: mail-front
+    volumes:
+      - ./data/conf.yml:/etc/mailrise.conf
+    environment:
+      TZ: "Europe/Andorra"
+    restart: always
+    ports:
+      - "8025:8025"
+    networks:
+      - default
+      - mail
+    # command: ["/etc/mailrise.conf", "-vv"]
+networks:
+  mail:
+    external: true

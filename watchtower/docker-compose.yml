@@ -7,11 +7,7 @@ services:
     environment:
       TZ: "Europe/Andorra"
       #WATCHTOWER_MONITOR_ONLY: "true"
-      WATCHTOWER_SCHEDULE: "0 0 2 * * *"
-      WATCHTOWER_NOTIFICATION_URL: "smtp://:@mail-front:25/?from=me@daduraronas.duckdns.org&to=david@daduraronas.duckdns.org&auth=None&encryption=None&starttls=No"
+      WATCHTOWER_SCHEDULE: "0 0 2 * * 5"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: "discord://${DISCORD_TOKEN}@${DISCORD_ID}"
     restart: unless-stopped
-    networks:
-      - mail
-networks:
-  mail:
-    external: true
