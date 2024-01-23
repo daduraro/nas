@@ -18,7 +18,7 @@ services:
       default:
         ipv4_address: 172.24.0.254
   dnsrobocert:
-    image: adferrand/dnsrobocert
+    image: adferrand/dnsrobocert:3.24.2
     container_name: dnsrobocert
     volumes:
       - "./conf/dnsrobocert:/etc/dnsrobocert:ro"

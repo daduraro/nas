@@ -9,7 +9,7 @@ $ docker compose exec owncloud occ maintenance:mode --on
 2. Create DB backup:
 
 ```console
-$ ./db_backup.sh
+$ docker compose exec mariadb /usr/bin/mysqldump -u root --password=owncloud --single-transaction owncloud > backups/owncloud_$(date +%Y%m%d).sql
 ```
 
 3. Shutdown the containers:
