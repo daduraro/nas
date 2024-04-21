@@ -4,3 +4,6 @@
 [submodule "wordler/src"]
 	path = wordler/src
 	url = git@github.com:daduraro/wordle-helper.git
+[submodule "spliit/spliit"]
+	path = spliit/spliit
+	url = https://github.com/spliit-app/spliit.git
