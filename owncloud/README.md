@@ -24,4 +24,5 @@ $ docker compose down
 ```console
 $ docker compose up -d
 $ docker compose exec owncloud occ maintenance:mode --off
+$ docker compose exec owncloud occ upgrade
 ```

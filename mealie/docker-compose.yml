@@ -1,0 +1,55 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v1.5.1 # 
+    container_name: mealie
+    restart: always
+    # ports:
+    #     - "9925:9000" # 
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    networks:
+      - default
+      - nginx
+    volumes:
+      - ./data/app:/app/data/
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: false
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Andorra
+      MAX_WORKERS: 1
+      WEB_CONCURRENCY: 1
+      BASE_URL: https://mealie.daduraronas.duckdns.org
+
+      # Database Settings
+      DB_ENGINE: postgres
+      POSTGRES_USER: mealie
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_SERVER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: mealie
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    restart: always
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: mealie
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mealie"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  nginx:
+    external: true
