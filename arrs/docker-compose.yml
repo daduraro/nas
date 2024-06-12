@@ -1,4 +1,3 @@
-version: "2.1"
 services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
@@ -76,6 +75,21 @@ services:
     networks:
       - default
       - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/bazarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
       - nginx
     restart: unless-stopped
 

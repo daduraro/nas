@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   plex:
     container_name: plex
@@ -19,18 +17,19 @@ services:
     environment:
       - HOSTNAME=PlexServer
       - TZ=Europe/Andorra
-      - PUID=65534
-      - PGID=65534
+      # - PUID=65534
+      # - PGID=65534
+      - PUID=911
+      - PGID=911
       - VERSION=docker
       - ADVERTISE_IP=${ADVERTISE_IP}
       - PLEX_CLAIM=${PLEX_CLAIM}
+      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - ${PLEX_CONFIG_PATH}:/config
       - ${PLEX_MEDIA_PATH}:/data
       - ${PLEX_TMP_PATH}:/transcode
     runtime: nvidia
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
     #deploy:
       #resources:
         #reservations:

@@ -6,7 +6,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       TZ: "Europe/Andorra"
-      #WATCHTOWER_MONITOR_ONLY: "true"
+      WATCHTOWER_MONITOR_ONLY: "true"
       WATCHTOWER_SCHEDULE: "0 0 2 * * 5"
       WATCHTOWER_NOTIFICATIONS: shoutrrr
       WATCHTOWER_NOTIFICATION_URL: "discord://${DISCORD_TOKEN}@${DISCORD_ID}"
