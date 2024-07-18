@@ -1,0 +1,23 @@
+services:
+  deluge:
+    image: linuxserver/deluge:latest
+    container_name: deluge
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/config:/config
+      - ${DOWNLOAD_DIR}:/files/downloads
+    ports:
+      - "8112:8112"
+      - "6881:6881"
+      - "58846:58846"
+    restart: unless-stopped
+    networks:
+      - default
+      - deluge-network
+networks:
+  deluge-network:
+    external: true
+

@@ -1,0 +1,17 @@
+services:
+  wordler:
+    build: ./src
+    container_name: wordler
+    restart: always
+    expose:
+      - "8080"
+    labels:
+      - "diun.enable=false"
+    volumes:
+      - "./data/corpus.txt:/data/corpus.txt:r"
+    networks:
+      - nginx
+
+networks:
+  nginx:
+    external: true

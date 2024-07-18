@@ -1,0 +1,13 @@
+# Restore DB backup
+
+1. Set-up new clean db (remove pg_data)
+
+```
+docker compose up db
+```
+
+2. Run restore backup
+
+```
+docker compose run -v $PWD/backup:/baserow/backups backend restore -f /baserow/backups/<DAY>.tar.gz 
+```

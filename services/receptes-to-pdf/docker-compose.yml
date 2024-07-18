@@ -1,0 +1,29 @@
+services:
+  receptes-pdf:
+    build:
+      context: ./src
+    container_name: receptes-pdf
+    environment:
+      - DAV_SERVER=${DAV_SERVER}
+      - DAV_SERVER_USER=${DAV_SERVER_USER}
+      - DAV_SERVER_PASS=${DAV_SERVER_PASS}
+      - DAV_SERVER_INDIR=${DAV_SERVER_INDIR}
+      - DAV_SERVER_OUTDIR=${DAV_SERVER_OUTDIR}
+    volumes:
+      - ./data/config:/config
+    restart: unless-stopped
+    networks:
+      - default
+      - bot-owncloud
+    extra_hosts:
+      - "${DAV_HOSTNAME}:${DAV_HOSTNAME_IP}"
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - "/dev/fuse"
+    labels:
+      - "diun.enable=false"
+
+networks:
+  bot-owncloud:
+    external: true

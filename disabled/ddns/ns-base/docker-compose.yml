@@ -1,0 +1,12 @@
+services:
+  ddns:
+    image: blaize/docker-dynamic-dns
+    container_name: ddns
+    restart: always
+    environment:
+      - USER=${USER}
+      - PASSWORD=${PASSWORD}
+      - HOSTNAME=${HOSTNAME}
+      - SERVICE=${SERVICE}
+      - DETECTIP=1
+      - INTERVAL=1

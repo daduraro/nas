@@ -1,0 +1,64 @@
+services:
+  db_recipes:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+
+  web_recipes:
+    restart: always
+    image: vabene1111/recipes
+    env_file:
+      - ./.env
+    volumes:
+      - staticfiles:/opt/recipes/staticfiles
+      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
+      - nginx_config:/opt/recipes/nginx/conf.d
+      - ./data/mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+
+  nginx_recipes:
+    image: nginx:mainline-alpine
+    restart: always
+    # ports:
+    #   - 80:80
+    container_name: tandoor
+    env_file:
+      - ./.env
+    depends_on:
+      - web_recipes
+    volumes:
+      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
+      - nginx_config:/etc/nginx/conf.d:ro
+      - staticfiles:/static:ro
+      - ./data/mediafiles:/media:ro
+    networks:
+      - nginx
+      - default
+
+  pgbackup:
+    container_name: pgbackup
+    env_file:
+      - ./.env
+    environment:
+      BACKUP_KEEP_DAYS: "8"
+      BACKUP_KEEP_MONTHS: "6"
+      BACKUP_KEEP_WEEKS: "4"
+      POSTGRES_EXTRA_OPTS: -Z6 --schema=public --blobs
+      SCHEDULE: '@daily'
+    # Note: the tag must match the version of postgres you are using
+    image: prodrigestivill/postgres-backup-local:16
+    restart: unless-stopped
+    volumes:
+      - ./db_dumps:/backups
+
+volumes:
+  nginx_config:
+  staticfiles:
+
+networks:
+  nginx:
+    external: true

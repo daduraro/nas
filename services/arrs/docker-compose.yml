@@ -1,0 +1,117 @@
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/prowlarr:/config
+    networks:
+      - default
+      - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/sonarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  sonarr_anime:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr_anime
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/sonarr_anime:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/radarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/lidarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - deluge-network
+      - nginx
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - TZ=Europe/Andorra
+    volumes:
+      - ./data/bazarr:/config
+      - ${FILES_DIR}:/files
+    networks:
+      - default
+      - nginx
+    restart: unless-stopped
+
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Europe/Andorra
+    # ports:
+    #   - "${PORT:-8191}:8191"
+    networks:
+      - default
+      - nginx
+    restart: unless-stopped
+
+networks:
+  deluge-network:
+    external: true
+  nginx:
+    external: true
+

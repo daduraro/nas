@@ -2,5 +2,6 @@
 ssl/
 data/
 backup*/
-/*-private/
+*-private/
 db_dumps/
+tmp/

@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   nginx:
     image: nginx:alpine
@@ -11,12 +9,15 @@ services:
       - "443:443"
       - "7443:443"
     volumes:
-      - ${CONF_FILE}:/etc/nginx/conf.d/my_proxy.conf:ro
+      - ./conf/nginx/my_proxy.conf:/etc/nginx/conf.d/my_proxy.conf:ro
+      - ./conf/nginx/services:/etc/nginx/conf.d/services:ro
       - ./ssl:/etc/nginx/certs
       - ./data/auth:/etc/nginx/auth:ro
+      - ./data/apk:/srv/apk:ro
     networks:
       default:
         ipv4_address: 172.24.0.254
+
   dnsrobocert:
     image: adferrand/dnsrobocert:3.24.2
     container_name: dnsrobocert

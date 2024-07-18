@@ -1,9 +1,6 @@
-[submodule "pyload/src"]
-	path = pyload/src
-	url = https://github.com/pyload/pyload
 [submodule "wordler/src"]
-	path = wordler/src
+	path = services/wordler/src
 	url = git@github.com:daduraro/wordle-helper.git
 [submodule "spliit/spliit"]
-	path = spliit/spliit
+	path = services/spliit/spliit/spliit
 	url = https://github.com/spliit-app/spliit.git
