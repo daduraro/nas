@@ -1,10 +1,10 @@
 <?php
 // file modified from https://github.com/srgi79/tinwoo_home_server
-$MOTD = "NAS Tinwoo Shop";
+$MOTD = "NAS";
 $EXT = ['nsp','xci','nsz','xcz'];
 $FOLDER = "games";
 $WEB_FOLDER = "/";
-$PROTO = $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ? 'https://' : 'http://';
+$PROTO = array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) ? ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ? 'https://' : 'http://') : 'http://';
 $SERVER = $PROTO.$_SERVER['HTTP_HOST'];
 $PORT = "7000";
 

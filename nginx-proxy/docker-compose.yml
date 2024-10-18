@@ -13,7 +13,7 @@ services:
       - ./conf/nginx/services:/etc/nginx/conf.d/services:ro
       - ./ssl:/etc/nginx/certs
       - ./data/auth:/etc/nginx/auth:ro
-      - ./data/apk:/srv/apk:ro
+      - /srv/data/files/apk:/srv/apk:ro
     networks:
       default:
         ipv4_address: 172.24.0.254

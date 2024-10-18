@@ -10,7 +10,7 @@ services:
     command: proxy-dns
     restart: always
     networks:
-      dns-net:
+      backend:
         ipv4_address: 172.20.0.2
 
   pihole:
@@ -18,10 +18,11 @@ services:
     image: pihole/pihole:latest
     expose:
       - "80"
+      - "67"
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      #- "67:67/udp" # DHCP port
+      # - "67:67/udp" # DHCP port
 
     environment:
       - TZ=${TIMEZONE}
@@ -32,8 +33,8 @@ services:
       - REV_SERVER_TARGET=${PIHOLE_ROUTER_IP}
       - REV_SERVER_DOMAIN=${PIHOLE_NETWORK_DOMAIN}
       - REV_SERVER_CIDR=${PIHOLE_REVERSE_DNS}
-      - ServerIP=${PIHOLE_HOST_IP}
-      #- ServerIPv6=${PIHOLE_HOST_IPV6}
+      - FTLCONF_LOCAL_IPV4=${PIHOLE_HOST_IP}
+      #- FTLCONF_LOCAL_IPV6=${PIHOLE_HOST_IPV6}
     #dns:
       #- 127.0.0.1 # "Sets your container's resolve settings to localhost so it can resolve DHCP hostnames [...]" - github.com/pi-hole/docker-pi-hole
       #- 1.1.1.1 # Backup server
@@ -44,14 +45,40 @@ services:
       - NET_ADMIN # Recommended but not required (DHCP needs NET_ADMIN) https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     depends_on:
       - "cloudflared"
+      # - "dhcprelay"
+      # - "dhcphelper"
     restart: always
     networks:
-      dns-net:
+      backend:
         ipv4_address: 172.20.0.3
       nginx:
 
+  # dhcprelay:
+  #   image: modem7/dhcprelay:latest
+  #   container_name: DHCPRelay
+  #   command: ["-id", "eno1", "-iu", "br-pihole", "172.20.0.3"] #https://fedoramagazine.org/build-network-bridge-fedora/
+  #   cap_add:
+  #     - NET_ADMIN
+  #   network_mode: host
+  #   restart: always
+  #   mem_limit: 20m
+
+  # dhcphelper:
+  #   restart: unless-stopped
+  #   container_name: dhcphelper
+  #   network_mode: "host"
+  #   image: homeall/dhcphelper:latest
+  #   environment:
+  #     IP: '172.20.0.3'
+  #     TZ: 'Europe/Andorra'
+  #   cap_add:
+  #     - NET_ADMIN
+
 networks:
-  dns-net:
+  backend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-pihole
     ipam:
       config:
         - subnet: 172.20.0.0/24

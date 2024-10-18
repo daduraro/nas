@@ -1,12 +1,12 @@
 services:
   jellyfin:
-    image: jellyfin/jellyfin:10.9.7
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     user: 1000:1000
     # network_mode: 'host'
     volumes:
       - ./data/config:/config
-      - ./tmp:/cache
+      - /tmp/jellyfin:/cache
       - type: bind
         source: ${MEDIA_PATH}
         target: /media
@@ -28,6 +28,14 @@ services:
         reservations:
           devices:
             - capabilities: [gpu]
+
+  volume-permissions-fixer:
+    image: bash:4.4
+    command: chown 1000:1000 -R /cache
+    volumes:
+      - /tmp/jellyfin:/cache
+    networks:
+      - default
 
 networks:
   nginx:

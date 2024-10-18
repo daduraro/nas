@@ -11,3 +11,13 @@ docker compose up db
 ```
 docker compose run -v $PWD/backup:/baserow/backups backend restore -f /baserow/backups/<DAY>.tar.gz 
 ```
+
+# Upgrade
+
+1. Download new docker compose file
+
+```
+curl -o docker-compose.yml.new  https://gitlab.com/baserow/baserow/-/raw/master/docker-compose.yml
+```
+
+2. Manually compare with old one and do `docker compose down`, rename, `docker compose pull` and `docker compose up -d`.
