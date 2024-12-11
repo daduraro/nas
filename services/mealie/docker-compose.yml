@@ -1,6 +1,6 @@
 services:
   mealie:
-    image: ghcr.io/mealie-recipes/mealie:v1.5.1 # 
+    image: ghcr.io/mealie-recipes/mealie:v2.3.0 # 
     container_name: mealie
     restart: always
     # ports:
@@ -46,9 +46,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mealie"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 networks:
   nginx:
