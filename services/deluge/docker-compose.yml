@@ -13,6 +13,8 @@ services:
       - "8112:8112"
       - "6881:6881"
       - "58846:58846"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     networks:
       - default

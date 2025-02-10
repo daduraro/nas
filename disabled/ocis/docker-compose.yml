@@ -1,0 +1,47 @@
+services:
+  ocis:
+    image: ${OCIS_DOCKER_IMAGE:-owncloud/ocis}:${OCIS_DOCKER_TAG:-latest}
+    container_name: ocis
+    restart: always
+    entrypoint:
+      - /bin/sh
+    # run ocis init to initialize a configuration file with random secrets
+    # it will fail on subsequent runs, because the config file already exists
+    # therefore we ignore the error and then start the ocis server
+    command: ["-c", "ocis init || true; ocis server"]
+    # ports:
+    #   - "9200:9200"
+    # dns:
+    #   - 172.20.0.3
+    extra_hosts:
+      - "${OCIS_DOMAIN}:${LOCAL_IP}"
+    environment:
+      # OCIS_URL: https://ocis.daduraronas.duckdns.org
+      OCIS_URL: https://${OCIS_DOMAIN}
+      OCIS_LOG_LEVEL: ${OCIS_LOG_LEVEL:-info}
+      OCIS_LOG_COLOR: "${OCIS_LOG_COLOR:-false}"
+      PROXY_HTTP_ADDR: 0.0.0.0:9200
+      PROXY_TLS: "false"
+      OCIS_INSECURE: "${INSECURE:-false}"
+      # basic auth (not recommended, but needed for e.g., WebDav clients that do not support OpenID Connect)
+      PROXY_ENABLE_BASIC_AUTH: "${PROXY_ENABLE_BASIC_AUTH:-false}"
+      # admin user password
+      IDM_ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin}" # this overrides the admin password from the configuration file
+      # demo users
+      IDM_CREATE_DEMO_USERS: "${DEMO_USERS:-false}"
+    logging:
+      driver: "local"
+    volumes:
+      - ${CONFIG_PATH}:/etc/ocis
+      - ${DATA_PATH}:/var/lib/ocis
+      # - ./config/ocis/proxy.yaml:/etc/ocis/proxy.yaml
+    networks:
+      - nginx
+      - bot-owncloud
+      - default
+
+networks:
+  bot-owncloud:
+    external: true
+  nginx:
+    external: true

@@ -1,0 +1,41 @@
+services:
+  memos:
+    image: neosmemo/memos:stable
+    container_name: memos
+    depends_on:
+      - db
+    environment:
+      - MEMOS_DRIVER=postgres
+      - MEMOS_DSN=user=${POSTGRESS_USER} password=${POSTGRESS_PASS} dbname=${POSTGRESS_DB} host=db sslmode=disable
+    networks:
+      - nginx
+      - default
+
+  db:
+    image: postgres:16.1
+    restart: unless-stopped
+    volumes:
+      - "./data:/var/lib/postgresql/data/"
+    environment:
+      POSTGRES_USER: ${POSTGRESS_USER}
+      POSTGRES_PASSWORD: ${POSTGRESS_PASS}
+      POSTGRES_DB: ${POSTGRESS_DB}
+
+  backup:
+    image: prodrigestivill/postgres-backup-local:16
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRESS_DB}
+      POSTGRES_USER: ${POSTGRESS_USER}
+      POSTGRES_PASSWORD: ${POSTGRESS_PASS}
+      SCHEDULE: "@daily"
+      BACKUP_DIR: /db_dumps
+    volumes:
+      - ./db_dumps:/db_dumps
+    depends_on:
+      - db
+    restart: always
+
+networks:
+  nginx:
+    external: true

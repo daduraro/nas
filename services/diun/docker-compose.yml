@@ -1,13 +1,25 @@
 services:
-  diun:
-    image: crazymax/diun:latest
-    command: serve
+  # diun:
+  #   image: crazymax/diun:latest
+  #   command: serve
+  #   volumes:
+  #     - "./data:/data"
+  #     - "./diun.yml:/diun.yml:ro"
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #   environment:
+  #     - "TZ=Europe/Andorra"
+  #     - "LOG_LEVEL=info"
+  #     - "LOG_JSON=false"
+  #   restart: always
+
+  watchtower:
+    image: containrrr/watchtower
     volumes:
-      - "./data:/data"
-      - "./diun.yml:/diun.yml:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - "TZ=Europe/Andorra"
-      - "LOG_LEVEL=info"
-      - "LOG_JSON=false"
-    restart: always
+      TZ: "Europe/Andorra"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_SCHEDULE: "0 0 2 * * 5"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: "discord://${DISCORD_TOKEN}@${DISCORD_ID}"
+    restart: unless-stopped

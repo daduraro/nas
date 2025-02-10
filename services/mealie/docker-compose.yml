@@ -1,6 +1,6 @@
 services:
   mealie:
-    image: ghcr.io/mealie-recipes/mealie:v2.3.0 # 
+    image: ghcr.io/mealie-recipes/mealie:latest # 
     container_name: mealie
     restart: always
     # ports:
@@ -22,7 +22,7 @@ services:
       TZ: Europe/Andorra
       MAX_WORKERS: 1
       WEB_CONCURRENCY: 1
-      BASE_URL: https://mealie.daduraronas.duckdns.org
+      BASE_URL: https://mealie.daduraro.org
 
       # Database Settings
       DB_ENGINE: postgres
@@ -49,6 +49,25 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+
+  backup:
+    container_name: mealie_db_backup
+    image: prodrigestivill/postgres-backup-local
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: mealie
+      POSTGRES_USER: mealie
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      SCHEDULE: "@daily"
+      BACKUP_DIR: /db_dumps
+    volumes:
+      - ./db_dumps:/db_dumps
+    depends_on:
+      - postgres
+    restart: always
+
 
 networks:
   nginx:

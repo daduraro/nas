@@ -12,6 +12,8 @@ services:
     networks:
       backend:
         ipv4_address: 172.20.0.2
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   pihole:
     container_name: pihole
@@ -48,6 +50,8 @@ services:
       # - "dhcprelay"
       # - "dhcphelper"
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       backend:
         ipv4_address: 172.20.0.3

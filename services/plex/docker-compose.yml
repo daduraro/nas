@@ -30,6 +30,8 @@ services:
       - ${PLEX_MEDIA_PATH}:/data
       - ${PLEX_TMP_PATH}:/transcode
     runtime: nvidia
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     #deploy:
       #resources:
         #reservations:

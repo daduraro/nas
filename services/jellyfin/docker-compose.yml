@@ -23,6 +23,8 @@ services:
     networks:
       - nginx
     runtime: nvidia
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     deploy:
       resources:
         reservations:

@@ -13,6 +13,8 @@ services:
       - default
       - mail
     # command: ["/etc/mailrise.conf", "-vv"]
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 networks:
   mail:
     external: true
